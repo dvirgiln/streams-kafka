@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.docker._
 name := "akka-consumer"
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)

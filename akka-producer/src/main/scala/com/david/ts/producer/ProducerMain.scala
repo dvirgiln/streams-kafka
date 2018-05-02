@@ -1,6 +1,7 @@
 package com.david.ts.producer
 
-import akka.NotUsed
+import akka.actor.Status.Failure
+import akka.{ Done, NotUsed }
 import akka.kafka.ProducerSettings
 import akka.kafka.scaladsl.Producer
 import akka.stream._
@@ -20,14 +21,25 @@ object ProducerMain extends App {
   lazy val logger = Logger.getLogger(getClass)
   implicit val system = ActorSystem()
   implicit val mater = ActorMaterializer()
+  val kafkaEndpoint = System.getProperty("ADVERTISED_ENDPOINT", "kafka:9092")
+  logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
-    .withBootstrapServers("192.168.99.100:9092")
+    .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
   val random = new Random()
   val s = Source
-    .tick(0.seconds, 300.millis, "").limit(200).map(_ => random.nextInt(1000))
+    .tick(0.seconds, 300.millis, "").map(_ => random.nextInt(1000))
 
-  s.map { number =>
+  val result = s.map { number =>
     logger.info(s"Producing record: $number")
     new ProducerRecord[Array[Byte], String]("test", s"$number")
   }.runWith(Producer.plainSink(producerSettings))
+
+  result.onComplete { a =>
+    if (a.isFailure) {
+      println("is a failure")
+    } else {
+      println("is not a failure")
+    }
+
+  }
 }

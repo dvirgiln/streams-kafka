@@ -18,12 +18,12 @@ object ConsumerMain extends App {
 
   implicit val system = ActorSystem()
   implicit val mater = ActorMaterializer()
-
+  val kafkaEndpoint = System.getProperty("ADVERTISED_ENDPOINT", "kafka:9092")
+  logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val consumerSettings = ConsumerSettings(system, new ByteArrayDeserializer, new StringDeserializer)
-    .withBootstrapServers("192.168.99.100:9092")
+    .withBootstrapServers(kafkaEndpoint)
     .withGroupId("group1")
     .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
-
 
   lazy val logger = Logger.getLogger(getClass)
   /*val done =
