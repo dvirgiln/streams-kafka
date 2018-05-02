@@ -4,12 +4,12 @@
 
 # Instructions usage using docker-compose
     1. sbt docker:publishLocal
-    2. docker-compose  -f docker-compose-spotify.yml up -d
+    2. docker-compose  -f docker-compose.yml up -d
     3. docker ps
     4. docker logs -f $consumer_container
 
 # Running consumer and producer outside of docker
-    1. Modify the docker-compose-spotify.yml and the producer main and consumer main to point to localhost:9092
+    1. Modify the docker-compose.yml and the producer main and consumer main to point to localhost:9092
     2. Run the kafka-spotify image alone: using docker run, or commenting the code in the yml file related the consumer and producer
     
 # Cluster monitoring

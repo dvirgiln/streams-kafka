@@ -1,18 +1,22 @@
-version: '3.1'
-
+version: '2'
 services:
-
-  adminer:
-    image: adminer
-    restart: always
+  kafka:
+    image: spotify/kafka
     ports:
-      - 8080:8080
-
-  db:
-    image: mysql:5.6
-    restart: always
+      - "9092:9092"
+      - "2181:2181"
     environment:
-      MYSQL_ROOT_PASSWORD: 123admin!
-      MYSQL_USER: user
-      MYSQL_PASSWORD: 123admin!
-      MYSQL_DATABASE: ts
+      ADVERTISED_HOST: kafka
+      ADVERTISED_PORT: 9092
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  producer:
+    image: akka-producer:0.1-SNAPSHOT
+    depends_on:
+      - kafka
+  consumer:
+    image: akka-consumer:0.1-SNAPSHOT
+    depends_on:
+      - kafka
