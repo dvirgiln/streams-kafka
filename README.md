@@ -38,3 +38,7 @@ Start localhost:9000 in the browser.
 Usage of spotify docker image:
 
         https://github.com/spotify/docker-kafka
+
+How to build multiprojects with different scala versions:
+        
+        https://github.com/lucidsoftware/sbt-cross
