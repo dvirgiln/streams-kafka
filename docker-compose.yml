@@ -13,10 +13,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   producer:
-    image: akka-producer:0.1-SNAPSHOT
+    image: com.david/akka-producer:0.1-SNAPSHOT
     depends_on:
       - kafka
   consumer:
-    image: akka-consumer:0.1-SNAPSHOT
+    image: com.david/akka-consumer:0.1-SNAPSHOT
     depends_on:
       - kafka
