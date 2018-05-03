@@ -20,7 +20,7 @@ object ProducerMain extends App {
   implicit val system = ActorSystem()
   implicit val mater = ActorMaterializer()
 
-  val kafkaEndpoint = System.getProperty("kafka_endpoint")
+  val kafkaEndpoint = System.getProperty("kafka_endpoint", "localhost:9092")
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
     .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
