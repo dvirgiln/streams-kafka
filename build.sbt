@@ -53,7 +53,7 @@ val assemblySettings=Seq(assemblyMergeStrategy in assembly := {
 lazy val akkaProducer = project.in(file("akka-producer")).
   settings(commonSettings).
   settings(libraryDependencies ++= akkaDependencies ++ circe)
-if 
+
 lazy val akkaConsumer = project.in(file("akka-consumer")).
     settings(commonSettings).
     settings(libraryDependencies ++= akkaDependencies ++ circe)

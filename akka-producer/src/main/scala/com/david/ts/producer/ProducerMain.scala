@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object ProducerMain extends App {
   import akka.actor._
   lazy val logger = Logger.getLogger(getClass)
-  logger.info(s"Starting Producer")
+  logger.info(s"Starting Producer2")
 
   implicit val system = ActorSystem()
   implicit val mater = ActorMaterializer()
@@ -23,7 +23,7 @@ object ProducerMain extends App {
   val kafkaEndpoint = System.getProperty("kafka_endpoint", "localhost:9092")
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
-    .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
+    .withBootstrapServers("kafka:9092").withCloseTimeout(5 minutes)
 
   val random = new Random()
   val s = Source
