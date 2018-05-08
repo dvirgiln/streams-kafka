@@ -42,3 +42,7 @@ Usage of spotify docker image:
 How to build multiprojects with different scala versions:
         
         https://github.com/lucidsoftware/sbt-cross
+        
+Spark Docker images from:
+        https://github.com/big-data-europe/docker-spark
+        

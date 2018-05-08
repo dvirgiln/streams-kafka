@@ -1,7 +1,7 @@
 name := "spark-consumer"
 mainClass in Compile := Some("com.david.ts.consumer.ConsumerMain")
 
-val sparkVersion = "2.2.0"
+val sparkVersion = "2.3.0"
 val sparkDependencies  : Seq[ModuleID] = Seq(
   ("org.apache.spark" %% "spark-core" % sparkVersion % "provided"),
   ("org.apache.spark" %% "spark-streaming" % sparkVersion % "provided"),
@@ -17,9 +17,16 @@ dockerfile in docker := {
   val artifactTargetPath = s"/app/${artifact.name}"
 
   new Dockerfile {
-    from("openjdk:8-jre")
+    from("spark-scala-template:2.3.0-hadoop2.7")
     add(artifact, artifactTargetPath)
-    entryPoint("java","-Dkafka_endpoint=kafka:9092", "-jar", artifactTargetPath)
+    env("SPARK_APPLICATION_MAIN_CLASS", "com.david.ts.consumer.ConsumerMain")
+    env("SPARK_APPLICATION_JAR_LOCATION", artifactTargetPath)
+    env("SPARK_APPLICATION_ARGS", "kafka:9092")
+    env("SPARK_MASTER_NAME", "spark-master")
+    env("SPARK_MASTER_PORT", "7077")
+    //from("openjdk:8-jre")
+
+    //entryPoint("java", "-Dkafka_endpoint=kafka:9092", "-jar", artifactTargetPath)
   }
 }
 imageNames in docker := Seq(
