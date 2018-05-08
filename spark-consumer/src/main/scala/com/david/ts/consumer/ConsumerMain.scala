@@ -8,7 +8,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 object ConsumerMain extends App {
   lazy val logger = Logger.getLogger(getClass)
-  logger.info(s"Starting Consumer")
+  logger.info(s"Starting Main")
   val kafkaEndpoint = args(0)
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount")
@@ -36,5 +36,10 @@ object ConsumerMain extends App {
     Subscribe[String, String](topics, kafkaParams)
   )
 
-  stream.map(record => (record.key, record.value))
+  val values = stream.map(record => record.value)
+  values.print()
+  logger.info(s"Starting Consumer")
+  ssc.start()
+  ssc.awaitTermination()
+  logger.info(s"End Consumer")
 }

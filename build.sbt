@@ -1,4 +1,4 @@
-name := "ts-akka-streams"
+name := "streams-kafka"
 organization := "com.david"
 version := "0.1"
 val akkaVersion = "2.5.4"
