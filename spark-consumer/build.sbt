@@ -17,7 +17,7 @@ dockerfile in docker := {
   val artifactTargetPath = s"/app/${artifact.name}"
 
   new Dockerfile {
-    from("spark-scala-template:2.3.0-hadoop2.7")
+    from("com.david/spark-docker-template:0.1-SNAPSHOT")
     add(artifact, artifactTargetPath)
     env("SPARK_APPLICATION_MAIN_CLASS", "com.david.ts.consumer.ConsumerMain")
     env("SPARK_APPLICATION_JAR_LOCATION", artifactTargetPath)

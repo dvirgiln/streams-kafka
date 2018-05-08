@@ -61,5 +61,8 @@ lazy val akkaConsumer = project.in(file("akka-consumer")).
 lazy val sparkConsumer = project.in(file("spark-consumer")).
   settings(libraryDependencies ++= circe ++ commonDependencies).
   settings(Seq(organization := "com.david", scalaVersion := "2.11.8"))
+
+lazy val dockerSparkTemplate = project.in(file("spark-docker-template"))
+
 lazy val root = (project in file(".")).
-  aggregate(akkaProducer, akkaConsumer, sparkConsumer)
+  aggregate(akkaProducer, akkaConsumer, dockerSparkTemplate, sparkConsumer )
