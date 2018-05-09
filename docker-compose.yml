@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   kafka:
     image: spotify/kafka
@@ -8,10 +8,8 @@ services:
     environment:
       ADVERTISED_HOST: kafka
       ADVERTISED_PORT: 9092
-
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
   producer:
     image: com.david/akka-producer:0.1-SNAPSHOT
     depends_on:
@@ -28,7 +26,7 @@ services:
       - "7077:7077"
     environment:
       - "ENABLE_INIT_DAEMON=false"
-  spark-worker-1:
+  spark-worker:
     image: bde2020/spark-worker:2.3.0-hadoop2.7
     container_name: spark-worker-1
     depends_on:
@@ -38,21 +36,12 @@ services:
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
       - "ENABLE_INIT_DAEMON=false"
-  spark-worker-2:
-    image: bde2020/spark-worker:2.3.0-hadoop2.7
-    container_name: spark-worker-2
-    depends_on:
-      - spark-master
-    ports:
-      - "8084:8081"
-    environment:
-      - "SPARK_MASTER=spark://spark-master:7077"
-      - "ENABLE_INIT_DAEMON=false"
+    deploy:
+      replicas: 5
   spark-consumer:
     image: com.david/spark-consumer:0.1-SNAPSHOT
     depends_on:
       - spark-master
-      - spark-worker-1
-      - spark-worker-2
+      - spark-worker
     environment:
       - "ENABLE_INIT_DAEMON=false"

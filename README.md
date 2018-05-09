@@ -21,13 +21,16 @@ In this example it is define:
 * Create spark cluster infrastructure using docker.
 * Create one simple producer and consumer that write and consume random numbers.
 * Explore Akka Streams and Spark Streaming.
+* Usage of docker-compose and swarm
 
 ## Instructions usage using docker-compose
     1. sbt docker
-    2. docker-compose  -f docker-compose.yml up -d
-    3. docker ps
+    2. docker swarm init
+    2. docker stack deploy -c docker-compose.yml streams
+    3. docker service ls
     4. docker logs -f $consumer_container
-    5. docker-compose  -f docker-compose.yml down
+    5. docker stack rm streams
+    6. docker swarm leave --force
 
 ## Running consumer and producer outside of docker
     1. Modify the docker-compose.yml and the producer main and consumer main to point to localhost:9092
@@ -51,6 +54,7 @@ Start localhost:9000 in the browser.
   * All the projects are dockerized using sbt. Has been used the [marcuslonnberg plugin](https://github.com/marcuslonnberg/sbt-docker)
   * This is a good example how to run different subprojects using  different scala versions:
              [sbt-cross plugin](https://github.com/marcuslonnberg/sbt-docker)
+  * Example how to use docker stack to scale some services (spark-workers)
 
 
 ## Useful links:
@@ -59,8 +63,11 @@ Usage of spotify docker image:
         https://github.com/spotify/docker-kafka
 
 How to build multiprojects with different scala versions:
-        
+
         https://github.com/lucidsoftware/sbt-cross
 
 Spark Docker images from:
         https://github.com/big-data-europe/docker-spark
+
+Kafka vs Flume:
+        https://www.linkedin.com/pulse/flume-kafka-real-time-event-processing-lan-jiang/
