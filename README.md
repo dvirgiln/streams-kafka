@@ -64,6 +64,19 @@ Start localhost:9000 in the browser.
 ## Local Kubernetes
 
     1. minikube start
+    2. minikube dashboard
+
+Useful commands:
+
+kubectl create -f 1_kafka_broker.yml
+kubectl delete pod,service kafka-broker
+kubectl get services
+kubectl get deployments
+kubectl get pods    
+//This creates a service
+kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 80800
+echo $(minikube ip)
+kubectl logs kubernetes-bootcamp-5c69669756-mts2z 
 
 ## Useful links:
 Usage of spotify docker image:
@@ -81,6 +94,12 @@ Kafka vs Flume:
         https://www.linkedin.com/pulse/flume-kafka-real-time-event-processing-lan-jiang/
 
 Kubernetes:
-        https://kubernetes.io/docs/user-journeys/users/application-developer/foundational/
-        https://github.com/kubernetes/minikube
-        https://www.virtualbox.org/wiki/Downloads
+
+          https://kubernetes.io/docs/user-journeys/users/application-developer/foundational/
+
+          https://github.com/kubernetes/minikube
+
+          https://www.virtualbox.org/wiki/Downloads
+
+    Interesting how kubectl creates the environment variables for the service, so another service can use this service.
+          https://kubernetes.io/docs/concepts/services-networking/service/#environment-variables

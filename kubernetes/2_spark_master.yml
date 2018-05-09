@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-master-svc
+  labels:
+    app: spark-master
+spec:
+  type: NodePort
+  ports:
+    - name: spark-ui
+      protocol: TCP
+      port: 8080
+    - name: spark-master
+      protocol: TCP
+      port: 7077
+  selector:
+    app: spark-master
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-master
+  labels:
+    app: spark-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-master
+  template:
+    metadata:
+      labels:
+        app: spark-master
+    spec:
+      containers:
+      - name: spark-master
+        image: bde2020/spark-master:2.3.0-hadoop2.7
+        ports:
+          - name: spark-ui
+            protocol: TCP
+            containerPort: 8080
+          - name: spark-master
+            protocol: TCP
+            containerPort: 7077

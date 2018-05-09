@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-worker
+  labels:
+    app: spark-worker
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: spark-worker
+  template:
+    metadata:
+      labels:
+        app: spark-worker
+    spec:
+      containers:
+      - name: spark-master
+        image: bde2020/spark-worker:2.3.0-hadoop2.7
+        ports:
+          - name: worker-port
+            protocol: TCP
+            containerPort: 8081
+        env:
+          - name: ENABLE_INIT_DAEMON
+            value: false
+
+        env:
+          - name: SPARK_MASTER
+            value: spark://${SPARK_MASTER_HOST}:7077
+          - name: ENABLE_INIT_DAEMON
+            value: false
