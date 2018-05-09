@@ -68,15 +68,15 @@ Start localhost:9000 in the browser.
 
 Useful commands:
 
-kubectl create -f 1_kafka_broker.yml
-kubectl delete pod,service kafka-broker
-kubectl get services
-kubectl get deployments
-kubectl get pods    
-//This creates a service
-kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 80800
-echo $(minikube ip)
-kubectl logs kubernetes-bootcamp-5c69669756-mts2z 
+* kubectl create -f 1_kafka_broker.yml
+* kubectl delete pod,service kafka-broker
+* kubectl get services
+* kubectl get deployments
+* kubectl get pods    
+* //This creates a service
+* kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 80800
+* echo $(minikube ip)
+* kubectl logs kubernetes-bootcamp-5c69669756-mts2z
 
 ## Useful links:
 Usage of spotify docker image:
@@ -101,5 +101,6 @@ Kubernetes:
 
           https://www.virtualbox.org/wiki/Downloads
 
-    Interesting how kubectl creates the environment variables for the service, so another service can use this service.
+    Interesting how kubectl creates the environment variables for the service, so another service
+    can use this service.
           https://kubernetes.io/docs/concepts/services-networking/service/#environment-variables
