@@ -26,11 +26,11 @@ In this example it is define:
 ## Instructions usage using docker-compose
     1. sbt docker
     2. docker swarm init
-    2. docker stack deploy -c docker-compose.yml streams
-    3. docker service ls
-    4. docker logs -f $consumer_container
-    5. docker stack rm streams
-    6. docker swarm leave --force
+    3. docker stack deploy -c docker-compose.yml streams
+    4. docker service ls
+    5. docker logs -f $consumer_container
+    6. docker stack rm streams
+    7. docker swarm leave --force
 
 ## Running consumer and producer outside of docker
     1. Modify the docker-compose.yml and the producer main and consumer main to point to localhost:9092
@@ -56,6 +56,14 @@ Start localhost:9000 in the browser.
              [sbt-cross plugin](https://github.com/marcuslonnberg/sbt-docker)
   * Example how to use docker stack to scale some services (spark-workers)
 
+## Install kubernetes on Mac
+    1. brew cask install minikube
+    2. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+    3. minikube start
+
+## Local Kubernetes
+
+    1. minikube start
 
 ## Useful links:
 Usage of spotify docker image:
@@ -71,3 +79,8 @@ Spark Docker images from:
 
 Kafka vs Flume:
         https://www.linkedin.com/pulse/flume-kafka-real-time-event-processing-lan-jiang/
+
+Kubernetes:
+        https://kubernetes.io/docs/user-journeys/users/application-developer/foundational/
+        https://github.com/kubernetes/minikube
+        https://www.virtualbox.org/wiki/Downloads
