@@ -7,7 +7,7 @@ In this example it is define:
 1. Kafka Broker using the spotify kafka image. Has been evaluated as well the [wurstmeister/kafka](https://hub.docker.com/r/wurstmeister/kafka/), but it works better this one.
 2. A producer and consumer using the [Akka Streams Kafka](https://doc.akka.io/docs/akka-stream-kafka/current/home.html) library.
 3. An example how to run Spark locally using docker:
-    3.1 Create a spark master and spark workers using docker compose.
+    3.1 Create a spark cluster: spark master and spark workers using docker compose.
     3.2 Create a consumer using spark streaming.
         3.3.1 To create the consumer I tried to use the scala template available here
             lhttps://github.com/big-data-europe/docker-spark
@@ -41,11 +41,11 @@ Start localhost:9000 in the browser.
 # Technical considerations
   * Usage of docker in one click:
     * Kafka broker
-    * Spark master and workers.
+    * Spark cluster.
     * Akka producer.
     * Akka consumer.
     * Spark streaming consumer.
-  * Scala template that allows to submit spark jobs to the spark master node.
+  * Creation of a scala template that allows to submit spark jobs to the spark master node.
   * All the projects are dockerized using sbt. Has been used the [marcuslonnberg plugin](https://github.com/marcuslonnberg/sbt-docker)
   * This is a good example how to run different subprojects using  different scala versions:
              [sbt-cross plugin](https://github.com/marcuslonnberg/sbt-docker)
