@@ -1,4 +1,4 @@
-# Iniciative
+## Iniciative
 The initial idea is to create a repository where I can place different experiments related streaming libraries. The idea is to start with Akka Streams and then compare with Spark Streaming and other libraries.
 
 The main goal is to reproduce a production environment in your local machine. For doing that, what it is better than Docker?
@@ -12,33 +12,35 @@ In this example it is define:
         3.3.1 To create the consumer I tried to use the scala template available here
             lhttps://github.com/big-data-europe/docker-spark
         3.3.2 The template was not up to date with the latest version of spark, so I created a new template available as part of this build. See the [spark-docker-template](https://github.com/dvirgiln/streams-kafka/tree/master/spark-docker-template) subproject.
-# Initial Requisites
+## Initial Requisites
 * Have sbt installed
 * Have docker and docker-compose installed.
 
-# Goal
+## Goal
 * Create kafka infrastructure using docker
+* Create spark cluster infrastructure using docker.
 * Create one simple producer and consumer that write and consume random numbers.
+* Explore Akka Streams and Spark Streaming.
 
-# Instructions usage using docker-compose
+## Instructions usage using docker-compose
     1. sbt docker
     2. docker-compose  -f docker-compose.yml up -d
     3. docker ps
     4. docker logs -f $consumer_container
     5. docker-compose  -f docker-compose.yml down
 
-# Running consumer and producer outside of docker
+## Running consumer and producer outside of docker
     1. Modify the docker-compose.yml and the producer main and consumer main to point to localhost:9092
     2. Run the kafka-spotify image alone: using docker run, or commenting the code in the yml file related the consumer and producer
 
-# Cluster monitoring
+## Cluster monitoring
 Use kafka-manager to monitor kafka. Very useful.
 
         https://github.com/yahoo/kafka-manager
 
 Start localhost:9000 in the browser.
 
-# Technical considerations
+## Technical considerations
   * Usage of docker in one click:
     * Kafka broker
     * Spark cluster.
@@ -51,7 +53,7 @@ Start localhost:9000 in the browser.
              [sbt-cross plugin](https://github.com/marcuslonnberg/sbt-docker)
 
 
-# Useful links:
+## Useful links:
 Usage of spotify docker image:
 
         https://github.com/spotify/docker-kafka
