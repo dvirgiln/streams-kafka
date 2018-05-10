@@ -17,11 +17,11 @@ dockerfile in docker := {
   val artifactTargetPath = s"/app/${artifact.name}"
 
   new Dockerfile {
-    from("com.david/spark-docker-template:0.1-SNAPSHOT")
+    from("com.david/spark-docker-template:0.2-SNAPSHOT")
     add(artifact, artifactTargetPath)
     env("SPARK_APPLICATION_MAIN_CLASS", "com.david.ts.consumer.ConsumerMain")
     env("SPARK_APPLICATION_JAR_LOCATION", artifactTargetPath)
-    env("SPARK_APPLICATION_ARGS", "kafka:9092")
+    env("SPARK_APPLICATION_ARGS", "streams_kafka:9092")
     env("SPARK_MASTER_NAME", "spark-master")
     env("SPARK_MASTER_PORT", "7077")
     //from("openjdk:8-jre")
@@ -40,4 +40,3 @@ imageNames in docker := Seq(
     tag = Some(version.value)
   )
 )
-

@@ -11,11 +11,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   producer:
-    image: com.david/akka-producer:0.1-SNAPSHOT
+    image: com.david/akka-producer:0.2-SNAPSHOT
     depends_on:
       - kafka
   akka-consumer:
-    image: com.david/akka-consumer:0.1-SNAPSHOT
+    image: com.david/akka-consumer:0.2-SNAPSHOT
     depends_on:
       - kafka
   spark-master:
@@ -36,10 +36,8 @@ services:
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
       - "ENABLE_INIT_DAEMON=false"
-    deploy:
-      replicas: 5
   spark-consumer:
-    image: com.david/spark-consumer:0.1-SNAPSHOT
+    image: com.david/spark-consumer:0.2-SNAPSHOT
     depends_on:
       - spark-master
       - spark-worker

@@ -1,6 +1,6 @@
 name := "streams-kafka"
 organization := "com.david"
-version := "0.1"
+version := "0.2-SNAPSHOT"
 val akkaVersion = "2.5.4"
 val circeVersion = "0.8.0"
 
@@ -12,7 +12,8 @@ scalaVersion := "2.12.2"
 
 lazy val commonSettings = Seq(
   organization := "com.david",
-  scalaVersion := "2.12.2"
+  scalaVersion := "2.12.2",
+  version := "0.2-SNAPSHOT"
 )
 
 val log4j : Seq[ModuleID] = Seq("log4j" % "log4j" % "1.2.17")
@@ -60,9 +61,10 @@ lazy val akkaConsumer = project.in(file("akka-consumer")).
 
 lazy val sparkConsumer = project.in(file("spark-consumer")).
   settings(libraryDependencies ++= circe ++ commonDependencies).
-  settings(Seq(organization := "com.david", scalaVersion := "2.11.8"))
+  settings(Seq(organization := "com.david", scalaVersion := "2.11.8", version := "0.2-SNAPSHOT"))
 
-lazy val dockerSparkTemplate = project.in(file("spark-docker-template"))
+lazy val dockerSparkTemplate = project.in(file("spark-docker-template")).
+settings(Seq(organization := "com.david", version := "0.2-SNAPSHOT"))
 
 lazy val root = (project in file(".")).
   aggregate(akkaProducer, akkaConsumer, dockerSparkTemplate, sparkConsumer )
