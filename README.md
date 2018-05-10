@@ -77,7 +77,11 @@ Useful commands:
 * kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 80800
 * echo $(minikube ip)
 * kubectl logs kubernetes-bootcamp-5c69669756-mts2z
+* kubectl delete pod,service,deployment -l app=spark-master
+* kubectl describe service kafka-broker-svc
 
+## Notes kubernetes
+* To create a service with a external ip address define the type of the container as LoadBalancer, but minikube doesnt support the LoadBalancer type.
 ## Useful links:
 Usage of spotify docker image:
 

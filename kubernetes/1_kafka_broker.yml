@@ -12,7 +12,7 @@ spec:
       port: 9092
     - name: zookeper
       protocol: TCP
-      port: 2181
+      port: 2181      
   selector:
     app: kafka-broker
 ---

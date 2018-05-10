@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akka-consumer
+  labels:
+    app: akka-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: akka-consumer
+  template:
+    metadata:
+      labels:
+        app: akka-consumer
+    spec:
+      containers:
+      - name: akka-consumer
+        image: com.david/akka-consumer:0.1-SNAPSHOT
+        env:
+          - name: BROKER_HOST
+            value: "${KAFKA_BROKER_HOST}"
+          - name: BROKER_PORT
+            value: "${KAFKA_BROKER_PORT}"

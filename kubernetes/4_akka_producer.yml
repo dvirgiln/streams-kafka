@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akka-producer
+  labels:
+    app: akka-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: akka-producer
+  template:
+    metadata:
+      labels:
+        app: akka-producer
+    spec:
+      containers:
+      - name: akka-producer
+        image: com.david/akka-producer:0.1-SNAPSHOT
+        env:
+          - name: BROKER_HOST
+            value: "${KAFKA_BROKER_PORT}"
+          - name: BROKER_PORT
+            value: ""

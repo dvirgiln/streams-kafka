@@ -42,3 +42,7 @@ spec:
           - name: spark-master
             protocol: TCP
             containerPort: 7077
+        env:
+          - name: ENABLE_INIT_DAEMON
+            value: "false"
+            
