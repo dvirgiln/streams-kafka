@@ -9,7 +9,7 @@ dockerfile in docker := {
   new Dockerfile {
     from("openjdk:8-jre")
     add(artifact, artifactTargetPath)
-    entryPoint("java","-Dkafka_endpoint=streams_kafka:9092", "-jar", artifactTargetPath)
+    entryPointShell("java","-Dkafka_endpoint=${BROKER_HOST}:$BROKER_PORT", "-jar", artifactTargetPath)
   }
 }
 imageNames in docker := Seq(

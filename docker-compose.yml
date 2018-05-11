@@ -1,5 +1,25 @@
 version: '3'
 services:
+  spark-master:
+    image: bde2020/spark-master:2.3.0-hadoop2.7
+    container_name: spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - "ENABLE_INIT_DAEMON=false"
+  spark-worker:
+    image: bde2020/spark-worker:2.3.0-hadoop2.7
+    container_name: spark-worker
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
+      - "ENABLE_INIT_DAEMON=false"
+    deploy:
+      replicas: 5
   kafka:
     image: spotify/kafka
     ports:
@@ -15,35 +35,15 @@ services:
     depends_on:
       - kafka
     environment:
-      - "BROKER_HOST=kafka"
+      - "BROKER_HOST=streams_kafka"
       - "BROKER_PORT=9092"
   akka-consumer:
     image: com.david/akka-consumer:0.2-SNAPSHOT
     depends_on:
       - kafka
     environment:
-      - "BROKER_HOST=kafka"
+      - "BROKER_HOST=streams_kafka"
       - "BROKER_PORT=9092"
-  spark-master:
-    image: bde2020/spark-master:2.3.0-hadoop2.7
-    container_name: streams_spark-master
-    ports:
-      - "8080:8080"
-      - "7077:7077"
-    environment:
-      - "ENABLE_INIT_DAEMON=false"
-  spark-worker:
-    image: bde2020/spark-worker:2.3.0-hadoop2.7
-    container_name: streams_spark-worker
-    depends_on:
-      - spark-master
-    ports:
-      - "8081:8081"
-    environment:
-      - "SPARK_MASTER=spark://streams_spark-master:7077"
-      - "ENABLE_INIT_DAEMON=false"
-    deploy:
-      replicas: 5
   spark-consumer:
     image: com.david/spark-consumer:0.2-SNAPSHOT
     depends_on:
@@ -51,7 +51,6 @@ services:
       - spark-worker
     environment:
       - "ENABLE_INIT_DAEMON=false"
-      - "BROKER_HOST=kafka"
-      - "BROKER_PORT=9092"
-      - "SPARK_MASTER_HOST=spark-master"
+      - "SPARK_MASTER_NAME=spark-master"
       - "SPARK_MASTER_PORT=7077"
+      - "SPARK_APPLICATION_ARGS=streams_kafka:9092"

@@ -11,7 +11,7 @@ object ConsumerMain extends App {
   logger.info(s"Starting Main")
   val kafkaEndpoint = args(0)
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
-  val conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount")
+  val conf = new SparkConf().setAppName("Consumer")
   val ssc = new StreamingContext(conf, Seconds(1))
 
   import org.apache.kafka.clients.consumer.ConsumerRecord
