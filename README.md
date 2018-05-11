@@ -28,9 +28,13 @@ In this example it is define:
     2. docker swarm init
     3. docker stack deploy -c docker-compose.yml streams
     4. docker service ls
-    5. docker logs -f $consumer_container
-    6. docker stack rm streams
-    7. docker swarm leave --force
+    5. docker logs -f $akka_producer_container
+    6. docker logs -f $spark_consumer_container
+    7. docker logs -f $akka_consumer_container
+    8. http://localhost:8080 to access the spark cluster console.
+    8. docker stack rm streams
+    9. docker swarm leave --force
+
 
 ## Running consumer and producer outside of docker
     1. Modify the docker-compose.yml and the producer main and consumer main to point to localhost:9092
@@ -46,7 +50,7 @@ Start localhost:9000 in the browser.
 ## Technical considerations
   * Usage of docker in one click:
     * Kafka broker
-    * Spark cluster.
+    * Spark cluster. It is possible to see the workers and jobs submitted in http://localhost:8080
     * Akka producer.
     * Akka consumer.
     * Spark streaming consumer.
