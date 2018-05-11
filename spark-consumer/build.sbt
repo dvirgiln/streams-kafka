@@ -21,8 +21,8 @@ dockerfile in docker := {
     add(artifact, artifactTargetPath)
     env("SPARK_APPLICATION_MAIN_CLASS", "com.david.ts.consumer.ConsumerMain")
     env("SPARK_APPLICATION_JAR_LOCATION", artifactTargetPath)
-    env("SPARK_APPLICATION_ARGS", "streams_kafka:9092")
-    env("SPARK_MASTER_NAME", "spark-master")
+    env("SPARK_APPLICATION_ARGS", "streams_kafka:9092 spark://streams_spark-master:7077")
+    env("SPARK_MASTER_NAME", "streams_spark-master")
     env("SPARK_MASTER_PORT", "7077")
     //from("openjdk:8-jre")
 

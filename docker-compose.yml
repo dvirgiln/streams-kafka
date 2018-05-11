@@ -26,7 +26,7 @@ services:
       - "BROKER_PORT=9092"
   spark-master:
     image: bde2020/spark-master:2.3.0-hadoop2.7
-    container_name: spark-master
+    container_name: streams_spark-master
     ports:
       - "8080:8080"
       - "7077:7077"
@@ -34,13 +34,13 @@ services:
       - "ENABLE_INIT_DAEMON=false"
   spark-worker:
     image: bde2020/spark-worker:2.3.0-hadoop2.7
-    container_name: spark-worker-1
+    container_name: streams_spark-worker
     depends_on:
       - spark-master
     ports:
       - "8081:8081"
     environment:
-      - "SPARK_MASTER=spark://spark-master:7077"
+      - "SPARK_MASTER=spark://streams_spark-master:7077"
       - "ENABLE_INIT_DAEMON=false"
   spark-consumer:
     image: com.david/spark-consumer:0.2-SNAPSHOT
