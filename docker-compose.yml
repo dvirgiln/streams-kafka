@@ -42,6 +42,8 @@ services:
     environment:
       - "SPARK_MASTER=spark://streams_spark-master:7077"
       - "ENABLE_INIT_DAEMON=false"
+    deploy:
+      replicas: 5
   spark-consumer:
     image: com.david/spark-consumer:0.2-SNAPSHOT
     depends_on:
