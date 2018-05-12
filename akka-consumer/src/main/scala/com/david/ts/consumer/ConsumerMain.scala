@@ -18,7 +18,7 @@ object ConsumerMain extends App {
   implicit val system = ActorSystem()
   implicit val mater = ActorMaterializer()
 
-  val kafkaEndpoint = System.getProperty("kafka_endpoint", "localhost:9092")
+  val kafkaEndpoint = System.getProperty("kafka_endpoint", "192.168.99.100:32557")
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val consumerSettings = ConsumerSettings(system, new ByteArrayDeserializer, new StringDeserializer)
     .withBootstrapServers(kafkaEndpoint)

@@ -35,6 +35,7 @@ spec:
       containers:
       - name: spark-master
         image: bde2020/spark-master:2.3.0-hadoop2.7
+        imagePullPolicy: IfNotPresent
         ports:
           - name: spark-ui
             protocol: TCP

@@ -35,6 +35,7 @@ spec:
       containers:
       - name: kafka-broker
         image: spotify/kafka
+        imagePullPolicy: IfNotPresent
         ports:
           - name: broker
             protocol: TCP

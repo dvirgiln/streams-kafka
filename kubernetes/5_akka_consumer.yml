@@ -16,9 +16,10 @@ spec:
     spec:
       containers:
       - name: akka-consumer
-        image: com.david/akka-consumer:0.1-SNAPSHOT
+        image: com.david/akka-consumer:0.2-SNAPSHOT
+        imagePullPolicy: IfNotPresent
         env:
           - name: BROKER_HOST
-            value: "${KAFKA_BROKER_HOST}"
+            value: "{{KAFKA_BROKER_HOST}}"
           - name: BROKER_PORT
-            value: "${KAFKA_BROKER_PORT}"
+            value: "{{KAFKA_BROKER_PORT}}"

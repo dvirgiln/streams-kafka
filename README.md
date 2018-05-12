@@ -67,8 +67,10 @@ Start localhost:9000 in the browser.
 
 ## Local Kubernetes
 
-    1. minikube start
-    2. minikube dashboard
+    1. minikube delete
+    2. rm -rf ~/.minikube
+    3. minikube start
+    4. minikube dashboard
 
 Useful commands:
 
@@ -83,6 +85,7 @@ Useful commands:
 * kubectl logs kubernetes-bootcamp-5c69669756-mts2z
 * kubectl delete pod,service,deployment -l app=spark-master
 * kubectl describe service kafka-broker-svc
+* kubectl exec -it kafka-broker-5d68b98857-l6bjw -- /bin/bash
 
 ## Notes kubernetes
 * To create a service with a external ip address define the type of the container as LoadBalancer, but minikube doesnt support the LoadBalancer type.
@@ -103,12 +106,15 @@ Kafka vs Flume:
 
 Kubernetes:
 
-          https://kubernetes.io/docs/user-journeys/users/application-developer/foundational/
+            https://kubernetes.io/docs/user-journeys/users/application-developer/foundational/
 
-          https://github.com/kubernetes/minikube
+            https://github.com/kubernetes/minikube
 
-          https://www.virtualbox.org/wiki/Downloads
+            https://www.virtualbox.org/wiki/Downloads
 
     Interesting how kubectl creates the environment variables for the service, so another service
     can use this service.
-          https://kubernetes.io/docs/concepts/services-networking/service/#environment-variables
+            https://kubernetes.io/docs/concepts/services-networking/service/#environment-variables
+
+    I had problems to read from local docker images with minikube:
+            https://stackoverflow.com/questions/38979231/imagepullbackoff-local-repository-with-minikube

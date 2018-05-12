@@ -17,12 +17,13 @@ spec:
       containers:
       - name: spark-master
         image: bde2020/spark-worker:2.3.0-hadoop2.7
+        imagePullPolicy: IfNotPresent
         ports:
           - name: worker-port
             protocol: TCP
             containerPort: 8081
         env:
           - name: SPARK_MASTER
-            value: "spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT}"
+            value: "spark://{{SPARK_MASTER_HOST}}:{{SPARK_MASTER_PORT}}"
           - name: ENABLE_INIT_DAEMON
             value: "false"

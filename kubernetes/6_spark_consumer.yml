@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: spark-consumer
-        image: com.david/spark-consumer:0.1-SNAPSHOT
+        image: com.david/spark-consumer:0.2-SNAPSHOT
+        imagePullPolicy: IfNotPresent
         env:
           - name: ENABLE_INIT_DAEMON
             value: "false"

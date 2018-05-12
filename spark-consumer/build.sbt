@@ -21,6 +21,7 @@ dockerfile in docker := {
     add(artifact, artifactTargetPath)
     env("SPARK_APPLICATION_MAIN_CLASS", "com.david.ts.consumer.ConsumerMain")
     env("SPARK_APPLICATION_JAR_LOCATION", artifactTargetPath)
+
   }
 }
 imageNames in docker := Seq(

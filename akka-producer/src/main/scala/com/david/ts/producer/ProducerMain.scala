@@ -20,10 +20,10 @@ object ProducerMain extends App {
   implicit val system = ActorSystem()
   implicit val mater = ActorMaterializer()
 
-  val kafkaEndpoint = System.getProperty("kafka_endpoint", "localhost:9092")
+  val kafkaEndpoint = System.getProperty("kafka_endpoint", "http://192.168.99.100:30092")
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
-    .withBootstrapServers("kafka:9092").withCloseTimeout(5 minutes)
+    .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
 
   val random = new Random()
   val s = Source
