@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-broker-svc
+  labels:
+    app: kafka-broker
+spec:
+  type: NodePort
+  ports:
+    - name: broker
+      protocol: TCP
+      port: 9092
+    - name: zookeper
+      protocol: TCP
+      port: 2181      
+  selector:
+    app: kafka-broker
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-broker
+  labels:
+    app: kafka-broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-broker
+  template:
+    metadata:
+      labels:
+        app: kafka-broker
+    spec:
+      containers:
+      - name: kafka-broker
+        image: spotify/kafka
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: broker
+            protocol: TCP
+            containerPort: 9092
+          - name: zookeper
+            protocol: TCP
+            containerPort: 2181

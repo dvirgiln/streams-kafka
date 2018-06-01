@@ -4,6 +4,7 @@ import org.apache.log4j.Logger
 import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext._
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 object ConsumerMain extends App {
@@ -13,7 +14,7 @@ object ConsumerMain extends App {
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val conf = new SparkConf().setAppName("Consumer")
   val ssc = new StreamingContext(conf, Seconds(1))
-
+  ssc.sparkContext.setLogLevel("ERROR")
   import org.apache.kafka.clients.consumer.ConsumerRecord
   import org.apache.kafka.common.serialization.StringDeserializer
   import org.apache.spark.streaming.kafka010._
@@ -28,16 +29,17 @@ object ConsumerMain extends App {
     "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> (false: java.lang.Boolean)
   )
+  val topics = List(Array("shop_features_thirty_sec"), Array("shop_product_features_one_min"))
+  topics.foreach { topic =>
+    val stream = KafkaUtils.createDirectStream[String, String](
+      ssc,
+      PreferConsistent,
+      Subscribe[String, String](topic, kafkaParams)
+    )
+    val values = stream.map(record => record.value)
+    values.print
+  }
 
-  val topics = Array("test")
-  val stream = KafkaUtils.createDirectStream[String, String](
-    ssc,
-    PreferConsistent,
-    Subscribe[String, String](topics, kafkaParams)
-  )
-
-  val values = stream.map(record => record.value)
-  values.print()
   logger.info(s"Starting Consumer")
   ssc.start()
   ssc.awaitTermination()

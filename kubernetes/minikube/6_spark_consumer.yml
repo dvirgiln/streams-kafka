@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-consumer
+  labels:
+    app: spark-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-consumer
+  template:
+    metadata:
+      labels:
+        app: spark-consumer
+    spec:
+      containers:
+      - name: spark-consumer
+        image: com.david/spark-consumer:0.2-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: ENABLE_INIT_DAEMON
+            value: "false"
+          - name: SPARK_MASTER_HOST
+            value: "${SPARK_MASTER_HOST}"
+          - name: SPARK_MASTER_PORT
+            value: "${SPARK_MASTER_PORT}"
+          - name: BROKER_HOST
+            value: "${KAFKA_BROKER_HOST}"
+          - name: BROKER_PORT
+            value: "${KAFKA_BROKER_PORT}"

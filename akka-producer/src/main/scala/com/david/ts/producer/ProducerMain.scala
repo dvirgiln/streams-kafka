@@ -13,6 +13,7 @@ import scala.util.Random
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ProducerMain extends App {
+  import com.david.ts.utils.SerializationUtils._
   import akka.actor._
   lazy val logger = Logger.getLogger(getClass)
   logger.info(s"Starting Producer2")
@@ -20,17 +21,19 @@ object ProducerMain extends App {
   implicit val system = ActorSystem()
   implicit val mater = ActorMaterializer()
 
-  val kafkaEndpoint = System.getProperty("kafka_endpoint", "http://192.168.99.100:30092")
+  val kafkaEndpoint = System.getProperty("kafka_endpoint", "localhost:9092")
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
-  val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
+  val producerSettings = ProducerSettings(system, new ByteArraySerializer, new ByteArraySerializer)
     .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
 
   val random = new Random()
   val s = Source
-    .tick(0.seconds, 300.millis, "").map(_ => random.nextInt(1000))
+    .tick(0.seconds, 5.seconds, "").map(_ => random.nextInt(1000))
 
-  s.map { number =>
-    logger.info(s"Producing record: $number")
-    new ProducerRecord[Array[Byte], String]("test", s"$number")
-  }.runWith(Producer.plainSink(producerSettings))
+  s.mapConcat(_ => ProducerGenerator.generateRecords(50).toList).map { record =>
+    logger.info(s"Producing record: $record")
+    new ProducerRecord[Array[Byte], Array[Byte]]("shops_records", serialise(record))
+  }
+
+    .runWith(Producer.plainSink(producerSettings))
 }

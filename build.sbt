@@ -49,22 +49,24 @@ val assemblySettings=Seq(assemblyMergeStrategy in assembly := {
   case x => MergeStrategy.first
 
 })
+lazy val streamsCommon = project.in(file("common")).
+  settings(commonSettings).
+  settings(Seq(organization := "com.david", version := "0.2-SNAPSHOT"))
 
-
-lazy val akkaProducer = project.in(file("akka-producer")).
+lazy val akkaProducer = project.in(file("akka-producer")).dependsOn(streamsCommon).
   settings(commonSettings).
   settings(libraryDependencies ++= akkaDependencies ++ circe)
 
-lazy val akkaConsumer = project.in(file("akka-consumer")).
+lazy val akkaConsumer = project.in(file("akka-consumer")).dependsOn(streamsCommon).
     settings(commonSettings).
     settings(libraryDependencies ++= akkaDependencies ++ circe)
 
 lazy val sparkConsumer = project.in(file("spark-consumer")).
-  settings(libraryDependencies ++= circe ++ commonDependencies).
+  settings(libraryDependencies ++= circe ++ commonDependencies ).
   settings(Seq(organization := "com.david", scalaVersion := "2.11.8", version := "0.2-SNAPSHOT"))
 
 lazy val dockerSparkTemplate = project.in(file("spark-docker-template")).
 settings(Seq(organization := "com.david", version := "0.2-SNAPSHOT"))
 
 lazy val root = (project in file(".")).
-  aggregate(akkaProducer, akkaConsumer, dockerSparkTemplate, sparkConsumer )
+  aggregate(streamsCommon, akkaProducer, akkaConsumer, dockerSparkTemplate, sparkConsumer )
