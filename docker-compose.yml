@@ -19,7 +19,7 @@ services:
       - "SPARK_MASTER=spark://spark-master:7077"
       - "ENABLE_INIT_DAEMON=false"
     deploy:
-      replicas: 5
+      replicas: 2
   kafka:
     image: spotify/kafka
     ports:

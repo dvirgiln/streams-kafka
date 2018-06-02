@@ -57,11 +57,7 @@ object ConsumerMain extends App {
       generator.forEvent(timestamp, event)
   }.groupBy(64, command => command.w)
 
-  subFlow.via(createGraph()).map { a =>
-    logger.info(s"Producer Record: ${a.value} topic=${a.topic}")
-    //new ProducerRecord[Array[Byte], String](a.topic, a.value())
-    a
-  }.to(Producer.plainSink(producerSettings)).run
+  subFlow.via(createGraph()).to(Producer.plainSink(producerSettings)).run
 
   /*
    *  Generates a graph from WindowCommand inputs to a kafka ProducerRecord
@@ -116,7 +112,12 @@ object ConsumerMain extends App {
         new ProducerRecord[Array[Byte], String](config.topic, record)
       }
 
-      bcast ~> filter ~> commands ~> aggregator ~> flatten ~> groupedBySplit ~> flattenMap ~> toFeatures ~> toProducerRecord ~> merge
+      val bcastFeature = builder.add(Broadcast[String](2))
+      val printSink = Sink.foreach[String](r => logger.info(s"Producer Record: $r"))
+
+      bcast ~> filter ~> commands ~> aggregator ~> flatten ~> groupedBySplit ~> flattenMap ~> toFeatures ~> bcastFeature
+      bcastFeature ~> toProducerRecord ~> merge
+      bcastFeature ~> printSink
 
     }
     FlowShape(bcast.in, merge.out)
