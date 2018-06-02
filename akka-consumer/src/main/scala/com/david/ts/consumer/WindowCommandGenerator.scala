@@ -15,7 +15,7 @@ case class OpenWindow(w: Window) extends WindowCommand
 case class CloseWindow(w: Window) extends WindowCommand
 case class AddToWindow(ev: SalesRecord, w: Window) extends WindowCommand
 
-class WindowCommandGenerator(windows: Seq[FiniteDuration]) {
+class WindowCommandGenerator(frequencies: Seq[FiniteDuration]) {
   private val MaxDelay = 5.seconds.toMillis
   private var watermark = 0L
   private val openWindows = mutable.Set[Window]()
@@ -26,8 +26,6 @@ class WindowCommandGenerator(windows: Seq[FiniteDuration]) {
       println(s"Dropping event ${event} with timestamp: ${ConsumerUtils.tsToString(timestamp)}")
       Nil
     } else {
-      //val eventWindows = windows.flatMap( window =>Window.windowsFor(timestamp,window))
-
       val closeCommands = openWindows.flatMap { ow =>
         if (ow.to < watermark) {
           openWindows.remove(ow)
@@ -37,9 +35,11 @@ class WindowCommandGenerator(windows: Seq[FiniteDuration]) {
         }
       }
 
-      val toBeOpen = windows.filter(w => openWindows.forall(ow => ow.duration.get != w.toMillis))
+      //This is key. It checks the different frequencies and it filters out the frequencies that already have an open window.
+      val toBeOpen = frequencies.filter(w => openWindows.forall(ow => ow.duration.get != w.toMillis))
 
       val openCommands = toBeOpen.flatMap { duration =>
+        //it creates a list of windows with the frequency defined by the config.
         val listWindows = Window.windowsFor(timestamp, duration)
         listWindows.flatMap { w =>
           openWindows.add(w)

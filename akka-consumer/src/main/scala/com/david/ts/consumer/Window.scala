@@ -7,6 +7,7 @@ case class Window(from: Long, to: Long, duration: Option[Long] = None) {
 }
 object Window {
   def windowsFor(ts: Long, duration: FiniteDuration): Set[Window] = {
+    //As the window length and window step is one, it will return just a Set of one window.
     val WindowLength = duration.toMillis
     val WindowStep = duration.toMillis
     val WindowsPerEvent = (WindowLength / WindowStep).toInt

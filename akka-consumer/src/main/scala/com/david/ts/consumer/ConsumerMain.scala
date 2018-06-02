@@ -31,38 +31,61 @@ object ConsumerMain extends App {
 
   val kafkaEndpoint = System.getProperty("kafka_endpoint", "localhost:9092")
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
+
+  //Defines how to consume from kafka
   val consumerSettings = ConsumerSettings(system, new ByteArrayDeserializer, new ByteArrayDeserializer)
     .withBootstrapServers(kafkaEndpoint)
     .withGroupId("group1")
     .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+
+  //Defines how to write to kafka
+  val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
+    .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
+
 
   val source = Consumer.plainSource(consumerSettings, Subscriptions.topics("shops_records")).mapAsync(1) { msg =>
     val value = deserialise(msg.value).asInstanceOf[SalesRecord]
     Future(value)
   }
 
-  /*val source = Source
-    .tick(0.seconds, 5.seconds, "").map(_ => SalesRecord(System.currentTimeMillis(),1, 1, 1, 25d))*/
-
-  val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
-    .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
-
+  //Generates window commands
   val subFlow = source.statefulMapConcat { () =>
-    val windows = configs
-    logger.info(s"Frequencies: $windows")
-    val generator = new WindowCommandGenerator(windows.map(_.frequency))
+    logger.info(s"Frequencies: $configs")
+    val generator = new WindowCommandGenerator(configs.map(_.frequency))
 
     event =>
       val timestamp = event.transactionTimestamp
       generator.forEvent(timestamp, event)
   }.groupBy(64, command => command.w)
 
-  val graph = GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
+  subFlow.via(createGraph()).map { a =>
+    logger.info(s"Producer Record: ${a.value} topic=${a.topic}")
+    //new ProducerRecord[Array[Byte], String](a.topic, a.value())
+    a
+  }.to(Producer.plainSink(producerSettings)).run
+
+
+  /*
+   *  Generates a graph from WindowCommand inputs to a kafka ProducerRecord
+   *  Graph steps:
+   *   1) Broadcast the WindowCommands for the different frequencies defined in the Configs
+   *   2) For each config frequency
+   *      2.1 Filter  => Gets the windows of the config frequency
+   *      2.2 Take Window Commands => Take all the window commands until a CloseWindow appears
+   *      2.3 Aggregate the events => Get all the events from the windows. Output List[SalesRecord]
+   *      2.4 Flatten the aggregation => flatten to have an output of SalesRecord in the streaming
+   *      2.5 Group by config splits => Iterate the config features and genarate a Map[String, List[SalesRecord]
+   *      2.6 Convert map to List  => Have in the streams [(String, List[SalesRecord])]
+   *      2.7 Convert to features => apply the different functions from the config to convert the List[SalesRecord] into features (AVG, COUNT, SUM)
+   *   3)Merge
+   */
+  def createGraph() = GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
     import GraphDSL.Implicits._
     val in = Inlet[WindowCommand]("Propagate.in")
     val bcast = builder.add(Broadcast[WindowCommand](configs.length))
     val merge = builder.add(Merge[ProducerRecord[Array[Byte], String]](configs.length))
     configs.map { config =>
+      //Filter the windows that correspond to our frequency
       val filter = Flow[WindowCommand].filter(_.w.duration.get == config.frequency.toMillis)
       val commands = Flow[WindowCommand].takeWhile(!_.isInstanceOf[CloseWindow])
 
@@ -100,17 +123,4 @@ object ConsumerMain extends App {
     }
     FlowShape(bcast.in, merge.out)
   }
-  subFlow.via(graph).map { a =>
-    logger.info(s"Producer Record: $a")
-    new ProducerRecord[Array[Byte], String](a.topic, a.value())
-  }.to(Producer.plainSink(producerSettings)).run
-  //subFlow.via(graph).to(Producer.plainSink(producerSettings)).run()
-
-  //.to(Producer.plainSink(producerSettings)).run()
-
-  /*configs.foreach { config =>
-    val sour = Source.tick(0 seconds, 100 millisecond, new ProducerRecord[Array[Byte], String](config.topic, "Hola David"))
-    sour.runWith(Producer.plainSink(producerSettings))
-  }*/
-
 }

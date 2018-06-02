@@ -118,3 +118,8 @@ Kubernetes:
 
     I had problems to read from local docker images with minikube:
             https://stackoverflow.com/questions/38979231/imagepullbackoff-local-repository-with-minikube
+
+Machine Learning:
+            http://www.disfrutalasmatematicas.com/datos/desviacion-estandar.html
+            https://machinelearningmastery.com/supervised-and-unsupervised-machine-learning-algorithms/
+            https://github.com/apache/spark/blob/dcdda19785a272969fb1e3ec18382403aaad6c91/examples/src/main/scala/org/apache/spark/examples/mllib/StreamingLinearRegressionExample.scala
