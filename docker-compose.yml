@@ -41,6 +41,8 @@ services:
     image: com.david/akka-consumer:0.2-SNAPSHOT
     depends_on:
       - kafka
+    volumes:
+      - /tmp:/tmp
     environment:
       - "BROKER_HOST=streams_kafka"
       - "BROKER_PORT=9092"

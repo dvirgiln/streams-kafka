@@ -8,6 +8,7 @@ import org.apache.spark.streaming.StreamingContext._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 object ConsumerMain extends App {
+  Thread.sleep(10000)
   lazy val logger = Logger.getLogger(getClass)
   logger.info(s"Starting Main")
   val kafkaEndpoint = args(0)

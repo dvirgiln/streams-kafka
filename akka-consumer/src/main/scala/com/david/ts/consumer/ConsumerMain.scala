@@ -20,7 +20,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.duration._
 
 object ConsumerMain extends App {
-
+  Thread.sleep(10000)
   val configs: Seq[Config] = Configs.configs
   import com.david.ts.utils.SerializationUtils._
   import akka.actor._
@@ -103,9 +103,14 @@ object ConsumerMain extends App {
 
       val flattenMap = Flow[Map[String, List[SalesRecord]]].mapConcat(a => a.toList)
 
+      val bcastListSalesGrouped = builder.add(Broadcast[(String, List[SalesRecord])](2))
+
+      val slowSubFlow = Flow[(String, List[SalesRecord])].throttle(5, 30.second, 5, ThrottleMode.Shaping)
+      val fileSink = Sink.foreach[(String, List[SalesRecord])](_ => SplitStore.saveToFile)
+
       val toFeatures = Flow[(String, List[SalesRecord])].map { entry =>
         val features = config.featuresFunc.map(featureFunc => featureFunc.func(entry._2)).foldLeft("")(_ + "," + _)
-        s"${entry._1}$features"
+        s"${SplitStore.getId(entry._1)}$features"
       }
 
       val toProducerRecord = Flow[String].map { record =>
@@ -115,7 +120,11 @@ object ConsumerMain extends App {
       val bcastFeature = builder.add(Broadcast[String](2))
       val printSink = Sink.foreach[String](r => logger.info(s"Producer Record: $r"))
 
-      bcast ~> filter ~> commands ~> aggregator ~> flatten ~> groupedBySplit ~> flattenMap ~> toFeatures ~> bcastFeature
+      bcast ~> filter ~> commands ~> aggregator ~> flatten ~> groupedBySplit ~> flattenMap ~> bcastListSalesGrouped
+
+      bcastListSalesGrouped ~> slowSubFlow ~> fileSink
+
+      bcastListSalesGrouped ~> toFeatures ~> bcastFeature
       bcastFeature ~> toProducerRecord ~> merge
       bcastFeature ~> printSink
 
