@@ -16,18 +16,18 @@ object Configs {
   val countItems = (a: Seq[SalesRecord]) => a.foldLeft(0d)((agg, record) => agg + record.amount)
 
   val configs = Seq(
-    Config(id = 1, frequency = 30 seconds, name = "shop", splitFunc = a => s"${a.shopId}",
+    Config(id = 1, frequency = 10 seconds, name = "shop", splitFunc = a => s"${a.shopId}",
       featuresFunc = Seq(
         FeatureFunc("sum", totalCostFunc),
         FeatureFunc("count_transactions", countTransactions),
         FeatureFunc("count_items", countItems)
-      ), topic = "shop_features_thirty_sec"),
-    Config(id = 2, frequency = 1 minute, name = "shop_product", splitFunc = a => s"${a.shopId}_${a.productId}",
+      ), topic = "shop_features_ten_sec"),
+    Config(id = 2, frequency = 30 seconds, name = "shop_product", splitFunc = a => s"${a.shopId}_${a.productId}",
       featuresFunc = Seq(
         FeatureFunc("sum", totalCostFunc),
         FeatureFunc("count_transactions", countTransactions),
         FeatureFunc("count_items", countItems)
-      ), topic = "shop_product_features_one_min")
+      ), topic = "shop_product_features_thirty_seconds")
 
   )
 }

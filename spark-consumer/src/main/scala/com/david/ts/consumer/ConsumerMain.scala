@@ -29,7 +29,7 @@ object ConsumerMain extends App {
     "auto.offset.reset" -> "latest",
     "enable.auto.commit" -> (false: java.lang.Boolean)
   )
-  val topics = List(Array("shop_features_thirty_sec"), Array("shop_product_features_one_min"))
+  val topics = List(Array("shop_product_features_thirty_seconds"), Array("shop_features_ten_sec"))
   topics.foreach { topic =>
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc,

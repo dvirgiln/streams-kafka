@@ -42,7 +42,6 @@ object ConsumerMain extends App {
   val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
     .withBootstrapServers(kafkaEndpoint).withCloseTimeout(5 minutes)
 
-
   val source = Consumer.plainSource(consumerSettings, Subscriptions.topics("shops_records")).mapAsync(1) { msg =>
     val value = deserialise(msg.value).asInstanceOf[SalesRecord]
     Future(value)
@@ -63,7 +62,6 @@ object ConsumerMain extends App {
     //new ProducerRecord[Array[Byte], String](a.topic, a.value())
     a
   }.to(Producer.plainSink(producerSettings)).run
-
 
   /*
    *  Generates a graph from WindowCommand inputs to a kafka ProducerRecord
