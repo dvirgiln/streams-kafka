@@ -20,7 +20,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.duration._
 
 object ConsumerMain extends App {
-  Thread.sleep(20000)
+  Thread.sleep(10000)
   val configs: Seq[Config] = Configs.configs
   import com.david.ts.utils.SerializationUtils._
   import akka.actor._

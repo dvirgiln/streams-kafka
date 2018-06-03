@@ -17,7 +17,7 @@ object ConsumerMain extends App {
   val kafkaEndpoint = args(0)
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val conf = new SparkConf().setAppName("Consumer")
-  val ssc = new StreamingContext(conf, Seconds(5))
+  val ssc = new StreamingContext(conf, Seconds(10))
   ssc.sparkContext.setLogLevel("ERROR")
 
   import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -43,8 +43,23 @@ object ConsumerMain extends App {
     )
     val values = stream.map(record => record.value).map(a => a.split(",")).
       map(value => (value(0).toInt, Vectors.dense(value.tail.map(_.toDouble)))).
-      groupByKeyAndWindow(org.apache.spark.streaming.Duration(40000))
-    values.print()
+      groupByKeyAndWindow(org.apache.spark.streaming.Duration(80000))
+
+    values.foreachRDD { rdd =>
+      val ids = rdd.keys.collect()
+      val rddById = ids.toSeq.map(id => (id -> rdd.filter(_._1 == id).map(_._2).flatMap(a => a)))
+      /*val a = rddById.foreach {
+        case (id, vectorRDD) =>
+          val sample = vectorRDD.collect()
+          println(s"ID222: $id vectors:${sample.size}")
+      }*/
+      rddById.foreach {
+        case (id, vectorRDD) =>
+          println()
+          val stats = Statistics.colStats(vectorRDD)
+          println(s"Accumulated stats id=$id mean: ${stats.mean} count: ${stats.count} variance: ${stats.variance}")
+      }
+    }
 
   }
 
