@@ -13,7 +13,7 @@ import scala.util.Random
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ProducerMain extends App {
-  Thread.sleep(10000)
+  Thread.sleep(20000)
   import com.david.ts.utils.SerializationUtils._
   import akka.actor._
   lazy val logger = Logger.getLogger(getClass)

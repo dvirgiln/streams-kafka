@@ -2,11 +2,14 @@ package com.david.ts.consumer
 
 import org.apache.log4j.Logger
 import org.apache.spark._
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.stat.Statistics
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.StreamingContext._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+
 object ConsumerMain extends App {
   Thread.sleep(10000)
   lazy val logger = Logger.getLogger(getClass)
@@ -14,8 +17,9 @@ object ConsumerMain extends App {
   val kafkaEndpoint = args(0)
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val conf = new SparkConf().setAppName("Consumer")
-  val ssc = new StreamingContext(conf, Seconds(1))
+  val ssc = new StreamingContext(conf, Seconds(10))
   ssc.sparkContext.setLogLevel("ERROR")
+
   import org.apache.kafka.clients.consumer.ConsumerRecord
   import org.apache.kafka.common.serialization.StringDeserializer
   import org.apache.spark.streaming.kafka010._
@@ -37,8 +41,21 @@ object ConsumerMain extends App {
       PreferConsistent,
       Subscribe[String, String](topic, kafkaParams)
     )
-    val values = stream.map(record => record.value)
-    values.print
+    val values = stream.map(record => record.value).map(a => a.split(",")).
+      map(value => (value(0).toInt, Vectors.dense(value.tail.map(_.toDouble)))).groupByKey().
+      window(org.apache.spark.streaming.Duration(40000))
+    values.print()
+
+    values.foreachRDD { rdd =>
+      rdd.foreachPartition(partition => partition.foreach(item => logger.info(item)))
+      /*val vectorRDD = grouped.flatMap(a => a._2)
+      try {
+        val stats = Statistics.colStats(vectorRDD)
+        logger.info(s"stats: mean=${stats.mean} count=${stats.count} variance=${stats.variance}")
+      } catch {
+        case iae: IllegalArgumentException => logger.warn(s"Stats not ready: ${iae.getMessage}")
+      }*/
+    }
   }
 
   logger.info(s"Starting Consumer")

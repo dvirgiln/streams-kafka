@@ -51,6 +51,8 @@ services:
     depends_on:
       - spark-master
       - spark-worker
+    volumes:
+      - /tmp:/tmp
     environment:
       - "ENABLE_INIT_DAEMON=false"
       - "SPARK_MASTER_NAME=spark-master"

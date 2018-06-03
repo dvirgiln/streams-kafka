@@ -5,6 +5,7 @@ val sparkVersion = "2.3.0"
 val sparkDependencies  : Seq[ModuleID] = Seq(
   ("org.apache.spark" %% "spark-core" % sparkVersion % "provided"),
   ("org.apache.spark" %% "spark-streaming" % sparkVersion % "provided"),
+  ("org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"),
   ("org.apache.spark" %% "spark-streaming-kafka-0-10" % sparkVersion).
     exclude("org.apache.spark", "spark-tags_2.11").
     exclude("org.spark-project.spark", "unused")

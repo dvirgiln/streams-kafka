@@ -20,7 +20,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.duration._
 
 object ConsumerMain extends App {
-  Thread.sleep(10000)
+  Thread.sleep(20000)
   val configs: Seq[Config] = Configs.configs
   import com.david.ts.utils.SerializationUtils._
   import akka.actor._
@@ -31,6 +31,8 @@ object ConsumerMain extends App {
 
   val kafkaEndpoint = System.getProperty("kafka_endpoint", "localhost:9092")
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
+
+  val ids = collection.mutable.Set[Int]()
 
   //Defines how to consume from kafka
   val consumerSettings = ConsumerSettings(system, new ByteArrayDeserializer, new ByteArrayDeserializer)
@@ -56,8 +58,8 @@ object ConsumerMain extends App {
       val timestamp = event.transactionTimestamp
       generator.forEvent(timestamp, event)
   }.groupBy(64, command => command.w)
-
   subFlow.via(createGraph()).to(Producer.plainSink(producerSettings)).run
+  //subFlow.to(createGraph()).run
 
   /*
    *  Generates a graph from WindowCommand inputs to a kafka ProducerRecord
@@ -123,12 +125,13 @@ object ConsumerMain extends App {
       bcast ~> filter ~> commands ~> aggregator ~> flatten ~> groupedBySplit ~> flattenMap ~> bcastListSalesGrouped
 
       bcastListSalesGrouped ~> slowSubFlow ~> fileSink
-
       bcastListSalesGrouped ~> toFeatures ~> bcastFeature
       bcastFeature ~> toProducerRecord ~> merge
       bcastFeature ~> printSink
 
     }
     FlowShape(bcast.in, merge.out)
+
+    //SinkShape(bcast.in)
   }
 }
