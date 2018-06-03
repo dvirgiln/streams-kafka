@@ -29,7 +29,7 @@ object ProducerMain extends App {
 
   val random = new Random()
   val s = Source
-    .tick(0.seconds, 5.seconds, "").map(_ => random.nextInt(1000))
+    .tick(0.seconds, 1.seconds, "").map(_ => random.nextInt(1000))
 
   s.mapConcat(_ => ProducerGenerator.generateRecords(50).toList).map { record =>
     logger.info(s"Producing record: $record")

@@ -17,7 +17,7 @@ object ConsumerMain extends App {
   val kafkaEndpoint = args(0)
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val conf = new SparkConf().setAppName("Consumer")
-  val ssc = new StreamingContext(conf, Seconds(10))
+  val ssc = new StreamingContext(conf, Seconds(2))
   ssc.sparkContext.setLogLevel("ERROR")
 
   import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -42,20 +42,9 @@ object ConsumerMain extends App {
       Subscribe[String, String](topic, kafkaParams)
     )
     val values = stream.map(record => record.value).map(a => a.split(",")).
-      map(value => (value(0).toInt, Vectors.dense(value.tail.map(_.toDouble)))).groupByKey().
-      window(org.apache.spark.streaming.Duration(40000))
+      map(value => (value(0).toInt, value.tail.reduce(_ + _))).groupByKeyAndWindow(org.apache.spark.streaming.Duration(20000))
     values.print()
 
-    values.foreachRDD { rdd =>
-      rdd.foreachPartition(partition => partition.foreach(item => logger.info(item)))
-      /*val vectorRDD = grouped.flatMap(a => a._2)
-      try {
-        val stats = Statistics.colStats(vectorRDD)
-        logger.info(s"stats: mean=${stats.mean} count=${stats.count} variance=${stats.variance}")
-      } catch {
-        case iae: IllegalArgumentException => logger.warn(s"Stats not ready: ${iae.getMessage}")
-      }*/
-    }
   }
 
   logger.info(s"Starting Consumer")

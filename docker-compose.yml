@@ -35,7 +35,7 @@ services:
     depends_on:
       - kafka
     environment:
-      - "BROKER_HOST=streams_kafka"
+      - "BROKER_HOST=kafka"
       - "BROKER_PORT=9092"
   akka-consumer:
     image: com.david/akka-consumer:0.2-SNAPSHOT
@@ -44,7 +44,7 @@ services:
     volumes:
       - /tmp:/tmp
     environment:
-      - "BROKER_HOST=streams_kafka"
+      - "BROKER_HOST=kafka"
       - "BROKER_PORT=9092"
   spark-consumer:
     image: com.david/spark-consumer:0.2-SNAPSHOT
@@ -57,4 +57,4 @@ services:
       - "ENABLE_INIT_DAEMON=false"
       - "SPARK_MASTER_NAME=spark-master"
       - "SPARK_MASTER_PORT=7077"
-      - "SPARK_APPLICATION_ARGS=streams_kafka:9092"
+      - "SPARK_APPLICATION_ARGS=kafka:9092"
