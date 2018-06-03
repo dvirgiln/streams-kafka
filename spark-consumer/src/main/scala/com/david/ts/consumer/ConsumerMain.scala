@@ -17,7 +17,7 @@ object ConsumerMain extends App {
   val kafkaEndpoint = args(0)
   logger.info(s"Connecting to kafka endpoint $kafkaEndpoint")
   val conf = new SparkConf().setAppName("Consumer")
-  val ssc = new StreamingContext(conf, Seconds(2))
+  val ssc = new StreamingContext(conf, Seconds(5))
   ssc.sparkContext.setLogLevel("ERROR")
 
   import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -42,7 +42,8 @@ object ConsumerMain extends App {
       Subscribe[String, String](topic, kafkaParams)
     )
     val values = stream.map(record => record.value).map(a => a.split(",")).
-      map(value => (value(0).toInt, value.tail.reduce(_ + _))).groupByKeyAndWindow(org.apache.spark.streaming.Duration(20000))
+      map(value => (value(0).toInt, Vectors.dense(value.tail.map(_.toDouble)))).
+      groupByKeyAndWindow(org.apache.spark.streaming.Duration(40000))
     values.print()
 
   }
